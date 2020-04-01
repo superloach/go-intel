@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/superloach/intel"
+	"github.com/superloach/go-intel"
 )
 
 const defVers = "a8ca614df70e09516b36f060ef0304464e29dc75"
 
 var (
-	conc    = flag.Int("conc", 10, "number of concurrent jobs")
-	timeout = flag.Duration("timeout", time.Second*5, "max request timeout")
-	logint  = flag.Int("logint", 25, "interval to log progress")
+	conc     = flag.Int("conc", 100, "number of concurrent jobs")
+	timeout  = flag.Duration("timeout", time.Second*5, "max request timeout")
+	logint   = flag.Int("logint", 25, "interval to log progress")
+	maxtries = flag.Int("maxtries", 10, "maximum times to retry on error")
 
 	base   = flag.String("base", "intel.ingress.com", "intel site url")
 	secure = flag.Bool("secure", true, "use https")
@@ -64,6 +65,7 @@ func main() {
 		panic(err)
 	}
 	client.Client.Timeout = *timeout
+	client.MaxTries = *maxtries
 	client.Base = *base
 	client.Secure = *secure
 	client.UA = *ua
@@ -79,6 +81,7 @@ func main() {
 		panic(err)
 	}
 	portalIDs = dedup(portalIDs)
+	l := len(portalIDs)
 
 	jobs := make(chan struct{}, *conc)
 	done := make(chan struct{})
@@ -88,19 +91,21 @@ func main() {
 		go func() {
 			jobs <- struct{}{}
 			portal, err := client.GetPortal(portalID)
+			<-jobs
 			if err != nil {
-				panic(err)
+				l--
+				fmt.Println(err)
+				return
 			}
 
 			portals = append(portals, portal)
-			done <- <-jobs
+			done <- struct{}{}
 		}()
 	}
 
-	l := len(portalIDs)
 	for range done {
 		i := len(portals)
-		if i % *logint == 0 {
+		if i%*logint == 0 {
 			fmt.Printf("%d/%d (%.1f%%)\n", i, l, float64(i)/float64(l)*100)
 		}
 		if i == l {
@@ -108,4 +113,10 @@ func main() {
 		}
 		i++
 	}
+
+	ol := len(portalIDs)
+	fmt.Printf(
+		"lost %d of %d (%.1f%%)\n",
+		ol-l, ol, float64(ol-l)/float64(ol)*100,
+	)
 }

@@ -24,12 +24,7 @@ func (c *Client) GetPortal(guid string) (*Portal, error) {
 			},
 		)
 		if err != nil {
-			return nil, err
-		}
-
-		keys := make([]string, 0)
-		for k := range res {
-			keys = append(keys, k)
+			continue
 		}
 
 		var ok bool
@@ -39,7 +34,7 @@ func (c *Client) GetPortal(guid string) (*Portal, error) {
 		}
 
 		tries++
-		if tries > 10 {
+		if tries > c.MaxTries {
 			return nil, fmt.Errorf("max tries portal details")
 		}
 	}

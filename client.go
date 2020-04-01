@@ -5,12 +5,13 @@ import "net/http"
 type Client struct {
 	Client *http.Client
 
-	Base    string
-	Secure  bool
-	UA      string
-	Version string
-	CSRF    string
-	SessID  string
+	Base     string
+	Secure   bool
+	UA       string
+	Version  string
+	CSRF     string
+	SessID   string
+	MaxTries int
 }
 
 func NewClient() (*Client, error) {

@@ -5,20 +5,30 @@ import "fmt"
 func (c *Client) PortalIDs(tileKeys []string) ([]string, error) {
 	ids := make([]string, 0)
 
-	res, err := c.jsonPost(
-		"/r/getEntities",
-		obj{
-			"tileKeys": tileKeys,
-			"v":        c.Version,
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
+	var result obj
+	tries := 0
+	for {
+		res, err := c.jsonPost(
+			"/r/getEntities",
+			obj{
+				"tileKeys": tileKeys,
+				"v":        c.Version,
+			},
+		)
+		if err != nil {
+			continue
+		}
 
-	result, ok := res["result"].(obj)
-	if !ok {
-		return nil, fmt.Errorf("assert portal ids result")
+		var ok bool
+		result, ok = res["result"].(obj)
+		if ok {
+			break
+		}
+
+		tries++
+		if tries > c.MaxTries {
+			return nil, fmt.Errorf("max tries portal details")
+		}
 	}
 
 	_map, ok := result["map"].(obj)
