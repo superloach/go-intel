@@ -50,7 +50,7 @@ func lngToTile(lng float64, zoom int) int {
 
 func TileKey(lat, lng float64, zoom int) string {
 	return fmt.Sprintf(
-		"%d_%d_%d_0_8_100",
+		"%d_%d_%d_8_8_100",
 		zoom,
 		lngToTile(
 			lng,

@@ -79,7 +79,7 @@ func (c *Client) PortalIDs(tileKeys []string) ([]string, error) {
 				}
 
 				ids = append(ids, id)
-			case "e": // line
+			case "e": // link
 				if len(parts) < 6 {
 					return nil, fmt.Errorf("short line parts")
 				}
@@ -97,7 +97,7 @@ func (c *Client) PortalIDs(tileKeys []string) ([]string, error) {
 				}
 
 				ids = append(ids, id2)
-			case "r": // poly
+			case "r": // field
 				if len(parts) < 3 {
 					return nil, fmt.Errorf("short poly parts")
 				}

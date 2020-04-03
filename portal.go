@@ -3,15 +3,18 @@ package intel
 import "fmt"
 
 type Portal struct {
-	Team  string
-	Lat   float64
-	Lng   float64
-	Image string
-	Name  string
+	ID    string  `json:"id" rethinkdb:"id"`
+	Team  string  `json:"ingr" rethinkdb:"ingr"`
+	Lat   float64 `json:"lat" rethinkdb:"lat"`
+	Lng   float64 `json:"lng" rethinkdb:"lng"`
+	Image string  `json:"image" rethinkdb:"image"`
+	Name  string  `json:"name" rethinkdb:"name"`
 }
 
 func (c *Client) GetPortal(guid string) (*Portal, error) {
 	p := &Portal{}
+
+	p.ID = guid
 
 	var result []interface{}
 	tries := 0
