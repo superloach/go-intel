@@ -41,16 +41,29 @@ func edge(zoom int) (e float64) {
 }
 
 func latToTile(lat float64, zoom int) int {
-	return int(math.Floor((1 - math.Log(math.Tan(lat*math.Pi/180)+1/math.Cos(lat*math.Pi/180))/math.Pi) / 2 * edge(zoom)))
+	a := lat * math.Pi / 180
+	b := math.Tan(a)
+	c := 1 / math.Cos(a)
+	d := math.Log(b + c)
+	e := 1 - d / math.Pi
+	f := edge(zoom)
+	g := e / 2 * f
+	h := math.Floor(g)
+	i := int(h)
+	return i
 }
 
 func lngToTile(lng float64, zoom int) int {
-	return int(math.Floor(lng+180) / 360 * edge(zoom))
+	a := edge(zoom)
+	b := (lng + 180) / 360 * a
+	c := math.Floor(b)
+	d := int(c)
+	return d
 }
 
 func TileKey(lat, lng float64, zoom int) string {
 	return fmt.Sprintf(
-		"%d_%d_%d_8_8_100",
+		"%d_%d_%d_0_8_100",
 		zoom,
 		lngToTile(
 			lng,

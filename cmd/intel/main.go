@@ -28,26 +28,18 @@ var (
 	zoom = flag.Int("zoom", 17, "zoom level 0-17")
 )
 
-func dedup(o []string) []string {
-	n := make([]string, len(o))
-	copy(n, o)
-
-	if len(n) < 2 {
-		return n
+func dedup(a []string) []string {
+	b := make(map[string]struct{})
+	for _, c := range a {
+		b[c] = struct{}{}
 	}
 
-	j := 0
-	i := 1
-
-	for i < len(n) {
-		if n[i] != n[j] {
-			j++
-			n[j] = n[i]
-		}
-		i++
+	d := make([]string, 0)
+	for e, _ := range b {
+		d = append(d, e)
 	}
 
-	return n[:j+1]
+	return d
 }
 
 func main() {
@@ -88,9 +80,9 @@ func main() {
 
 	portals := make([]*intel.Portal, 0)
 	for _, portalID := range portalIDs {
-		go func() {
+		go func(guid string) {
 			jobs <- struct{}{}
-			portal, err := client.GetPortal(portalID)
+			portal, err := client.GetPortal(guid)
 			<-jobs
 			if err != nil {
 				l--
@@ -100,7 +92,7 @@ func main() {
 
 			portals = append(portals, portal)
 			done <- struct{}{}
-		}()
+		}(portalID)
 	}
 
 	for range done {
@@ -119,4 +111,8 @@ func main() {
 		"lost %d of %d (%.1f%%)\n",
 		ol-l, ol, float64(ol-l)/float64(ol)*100,
 	)
+
+	for _, p := range portals {
+		fmt.Println(p.Name)
+	}
 }
