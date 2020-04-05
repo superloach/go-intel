@@ -28,20 +28,6 @@ var (
 	zoom = flag.Int("zoom", 17, "zoom level 0-17")
 )
 
-func dedup(a []string) []string {
-	b := make(map[string]struct{})
-	for _, c := range a {
-		b[c] = struct{}{}
-	}
-
-	d := make([]string, 0)
-	for e, _ := range b {
-		d = append(d, e)
-	}
-
-	return d
-}
-
 func main() {
 	flag.Parse()
 
@@ -72,7 +58,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	portalIDs = dedup(portalIDs)
 	l := len(portalIDs)
 
 	jobs := make(chan struct{}, *conc)

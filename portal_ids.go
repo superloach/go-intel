@@ -2,6 +2,18 @@ package intel
 
 import "fmt"
 
+func dedup(orig []string) []string {
+	keys := make(map[string]struct{})
+	list := make([]string, 0)
+	for _, item := range orig {
+		if _, ok := keys[item]; !ok {
+			keys[item] = struct{}{}
+			list = append(list, item)
+		}
+	}
+	return list
+}
+
 func (c *Client) PortalIDs(tileKeys []string) ([]string, error) {
 	ids := make([]string, 0)
 
@@ -130,5 +142,5 @@ func (c *Client) PortalIDs(tileKeys []string) ([]string, error) {
 		}
 	}
 
-	return ids, nil
+	return dedup(ids), nil
 }
