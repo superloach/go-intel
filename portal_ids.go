@@ -26,7 +26,7 @@ func (c *Client) PortalIDs(tileKeys []string) ([]string, error) {
 		}
 
 		tries++
-		if tries > c.MaxTries {
+		if c.MaxTries > 0 && tries > c.MaxTries {
 			return nil, fmt.Errorf("max tries portal details")
 		}
 	}

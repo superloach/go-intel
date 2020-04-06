@@ -37,7 +37,7 @@ func (c *Client) GetPortal(guid string) (*Portal, error) {
 		}
 
 		tries++
-		if tries > c.MaxTries {
+		if c.MaxTries > 0 && tries > c.MaxTries {
 			return nil, fmt.Errorf("max tries portal details")
 		}
 	}
@@ -66,7 +66,11 @@ func (c *Client) GetPortal(guid string) (*Portal, error) {
 
 	image, ok := result[7].(string)
 	if !ok {
-		return nil, fmt.Errorf("assert image")
+		if result[7] == nil {
+			image = ""
+		} else {
+			return nil, fmt.Errorf("assert image")
+		}
 	}
 	p.Image = image
 
