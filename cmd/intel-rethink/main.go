@@ -1,10 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"time"
 
+	"github.com/namsral/flag"
 	"github.com/superloach/go-intel"
 	r "gopkg.in/rethinkdb/rethinkdb-go.v6"
 )
@@ -38,6 +38,8 @@ var (
 
 	// db options
 	dburl   = flag.String("dburl", "", "rethink url")
+	dbuser  = flag.String("dbuser", "", "rethink username")
+	dbpass  = flag.String("dbpass", "", "rethink password")
 	dbname  = flag.String("dbname", "", "rethink db name")
 	dbtable = flag.String("dbtable", "", "rethink table name")
 )
@@ -76,8 +78,10 @@ func main() {
 	}
 
 	db, err := r.Connect(r.ConnectOpts{
-		Address: *dburl,
-		Timeout: *timeout,
+		Address:  *dburl,
+		Username: *dbuser,
+		Password: *dbpass,
+		Timeout:  *timeout,
 	})
 	if err != nil {
 		panic(err)
@@ -117,7 +121,7 @@ func main() {
 	jobs := make(chan struct{}, *conc)
 	done := make(chan struct{})
 
-	for portalID, _ := range portalIDMap {
+	for portalID := range portalIDMap {
 		go func(guid string) {
 			jobs <- struct{}{}
 

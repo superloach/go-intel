@@ -45,7 +45,7 @@ func latToTile(lat float64, zoom int) int {
 	b := math.Tan(a)
 	c := 1 / math.Cos(a)
 	d := math.Log(b + c)
-	e := 1 - d / math.Pi
+	e := 1 - d/math.Pi
 	f := edge(zoom)
 	g := e / 2 * f
 	h := math.Floor(g)
