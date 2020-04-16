@@ -9,8 +9,6 @@ import (
 	r "gopkg.in/rethinkdb/rethinkdb-go.v6"
 )
 
-const defVers = "a8ca614df70e09516b36f060ef0304464e29dc75"
-
 var (
 	// process options
 	conc    = flag.Int("conc", 100, "number of concurrent jobs")
@@ -22,7 +20,7 @@ var (
 	base   = flag.String("base", "intel.ingress.com", "intel site url")
 	secure = flag.Bool("secure", true, "use https")
 	ua     = flag.String("ua", "Foo Bar Browser", "user agent")
-	vers   = flag.String("version", defVers, "internal intel version")
+	vers   = flag.String("version", "f0d1685cfbbd243ac6688645056a6ed2c642cea5", "internal intel version")
 
 	// auth options
 	csrf   = flag.String("csrf", "", "csrf token")
